@@ -6,7 +6,6 @@ from scipy.optimize import linear_sum_assignment
 def determine_winner(player1: int, player2: int):
     win_sum = team1Wins[player1] + team2Wins[player2] + 2
     random_number = random.randint(1, win_sum)
-    print(random_number)
     if random_number <= team1Wins[player1] + 1:
         team1Wins[player1] += 1
         team2Losses[player2] += 1
@@ -32,13 +31,18 @@ def update_ratings(round_number: int):
         team2Ratings[num] = (team2Wins[num] + 1) / (round_number + 2)
 
 
-def run_round(round_number: int):
+def run_round(round_number: int) -> int:
     row, col = linear_sum_assignment(matrix)
+    final_sum: int = 0
     for index in range(teamSize):
+        weight_for_sum: int = teamSize ** 2 - matrix[row[index]][col[index]]
+        final_sum += weight_for_sum
+        print(row[index], col[index], team1Wins[row[index]], team2Wins[col[index]], weight_for_sum)
         matrix[row[index]][col[index]] = math.inf
         determine_winner(row[index], col[index])
     determine_weights()
     update_ratings(round_number)
+    return final_sum
 
 
 teamSize: int = 4
@@ -63,10 +67,9 @@ for i in range(teamSize):
 
 
 for i in range(teamSize):
-    run_round(i+1)
+    print(run_round(i+1))
     ratingsSum = 0.0
     for rating in team2Ratings:
         ratingsSum += rating
     for rating in team1Ratings:
         ratingsSum += rating
-
