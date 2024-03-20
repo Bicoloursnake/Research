@@ -81,13 +81,14 @@ class BipartiteTournament:
         return final_sum
 
 
-numberOfTournaments: int = 40
+numberOfTournaments: int = 1000
+numberOfPlayers: int = 10
 for tournamentNumber in range(numberOfTournaments):
-    numberOfPlayers: int = 4
     tournament: BipartiteTournament = BipartiteTournament(numberOfPlayers)
-
+    stringToWrite: str = ""
     for round_number in range(numberOfPlayers):
-        print("Tournament Number " + str(tournamentNumber + 1) +
-              " Round " + str(round_number + 1) + " sum of rating differences: "
-              + str(tournament.run_round(round_number+1)) + "/" + str(round_number+2))
-
+        stringToWrite += str(tournament.run_round(round_number+1)) + ","
+    stringToWrite = stringToWrite[0: len(stringToWrite) - 1]
+    stringToWrite += "\n"
+    with open("results.csv", "a") as targetFile:
+        targetFile.write(stringToWrite)
