@@ -6,7 +6,8 @@ import numpy as np
 
 
 class PrescheduledBipartiteTournament:
-    """A class to facilitate running many Bipartite Round Robin Tournaments"""
+    """A class to facilitate running many
+    Prescheduled Bipartite Round Robin Tournaments"""
     teamSize: int = 8
     matrix: np.array = np.array([])
     team1Wins: list[int] = []
@@ -34,7 +35,8 @@ class PrescheduledBipartiteTournament:
             self.team2Ratings.append(1)
 
     def determine_winner(self, player1: int, player2: int):
-        """Randomly chooses a winner between competitors based on their respective ratings"""
+        """Randomly chooses a winner between
+        competitors based on their respective ratings"""
         win_sum = self.team1Wins[player1] + self.team2Wins[player2] + 2
         random_number = random.randint(1, win_sum)
         if random_number <= self.team1Wins[player1] + 1:
@@ -45,19 +47,27 @@ class PrescheduledBipartiteTournament:
             self.team1Losses[player1] += 1
 
     def determine_weight(self, player1: int, player2: int) -> int:
-        """Determines weight of a match based on difference of ratings multiplied by the denominator in order
+        """Determines weight of a match based on difference of
+        ratings multiplied by the denominator in order
         to be able to work with integers only"""
         return int(math.fabs(self.team1Wins[player1] - self.team2Wins[player2]))
 
     def update_ratings(self, current_round_number: int):
-        """Used to store ratings as floating point values, but to avoid compounding floating point errors, doesn't
-        use its previous value to determine the new value, instead using the integer win count"""
+        """Used to store ratings as floating point values,
+        but to avoid compounding floating point errors, doesn't
+        use its previous value to determine the new value,
+        instead using the integer win count"""
         for num in range(self.teamSize):
-            self.team1Ratings[num] = (self.team1Wins[num] + 1) / (current_round_number + 2)
-            self.team2Ratings[num] = (self.team2Wins[num] + 1) / (current_round_number + 2)
+            self.team1Ratings[num] = \
+                (self.team1Wins[num] + 1) / (current_round_number + 2)
+            self.team2Ratings[num] = \
+                (self.team2Wins[num] + 1) / (current_round_number + 2)
 
     def run_round(self, current_round_number: int) -> int:
-        """Runs a round, using the various other functions to determine a winner, update the weight matrix, and
+        """Runs the next round determined by the Latin Square
+        (using the minimum weight matching as a shortcut to
+        shorten the amount of code written),
+        using the various other functions to determine a winner, and
         update the ratings and win counts"""
         row, col = linear_sum_assignment(self.matrix)
         final_sum: int = 0
@@ -72,12 +82,13 @@ class PrescheduledBipartiteTournament:
     def to_str(self) -> str:
         return str(self.matrix)
 
+
 numberOfTournaments: int = 20
 numberOfPlayers: int = 4
 for tournamentNumber in range(numberOfTournaments):
-    schedule: LatinSquare = LatinSquare.random(n = numberOfPlayers)
-    arrayObject = schedule.square
-    tournament: PrescheduledBipartiteTournament = PrescheduledBipartiteTournament(arrayObject, numberOfPlayers)
+    arrayObject: np.array = LatinSquare.random(n=numberOfPlayers).square
+    tournament: PrescheduledBipartiteTournament = \
+        PrescheduledBipartiteTournament(arrayObject, numberOfPlayers)
     stringToWrite: str = ""
     for round_number in range(numberOfPlayers):
         stringToWrite += str(tournament.run_round(round_number+1)) + ","

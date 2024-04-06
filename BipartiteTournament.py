@@ -35,7 +35,8 @@ class BipartiteTournament:
                 self.matrix[number].append(0)
 
     def determine_winner(self, player1: int, player2: int):
-        """Randomly chooses a winner between competitors based on their respective ratings"""
+        """Randomly chooses a winner between
+        competitors based on their respective ratings"""
         win_sum = self.team1Wins[player1] + self.team2Wins[player2] + 2
         random_number = random.randint(1, win_sum)
         if random_number <= self.team1Wins[player1] + 1:
@@ -46,28 +47,38 @@ class BipartiteTournament:
             self.team1Losses[player1] += 1
 
     def determine_weight(self, player1: int, player2: int) -> int:
-        """Determines weight of a match based on difference of ratings multiplied by the denominator in order
+        """Determines weight of a match based on difference of ratings
+        multiplied by the denominator in order
         to be able to work with integers only"""
         return int(math.fabs(self.team1Wins[player1] - self.team2Wins[player2]))
 
     def determine_weights(self):
-        """Uses entry weights to fill in the matrix. The multiplication by negative 1 happens to convert
-        the minimum linear assignment problem into a maximum linear assignment problem, and a large constant
+        """Uses entry weights to fill in the matrix.
+        The multiplication by negative 1 happens to convert
+        the minimum linear assignment problem into a
+        maximum linear assignment problem, and a large constant
         is used to keep all values positive"""
         for row_num in range(self.teamSize):
             for col_num in range(self.teamSize):
                 if self.matrix[row_num][col_num] <= self.teamSize ** 2:
-                    self.matrix[row_num][col_num] = (self.teamSize ** 2) - self.determine_weight(row_num, col_num)
+                    self.matrix[row_num][col_num] = \
+                        (self.teamSize ** 2) - \
+                        self.determine_weight(row_num, col_num)
 
     def update_ratings(self, current_round_number: int):
-        """Used to store ratings as floating point values, but to avoid compounding floating point errors, doesn't
-        use its previous value to determine the new value, instead using the integer win count"""
+        """Used to store ratings as floating point values,
+        but to avoid compounding floating point errors, doesn't
+        use its previous value to determine the new value,
+        instead using the integer win count"""
         for num in range(self.teamSize):
-            self.team1Ratings[num] = (self.team1Wins[num] + 1) / (current_round_number + 2)
-            self.team2Ratings[num] = (self.team2Wins[num] + 1) / (current_round_number + 2)
+            self.team1Ratings[num] = \
+                (self.team1Wins[num] + 1) / (current_round_number + 2)
+            self.team2Ratings[num] = \
+                (self.team2Wins[num] + 1) / (current_round_number + 2)
 
     def run_round(self, current_round_number: int) -> int:
-        """Runs a round, using the various other functions to determine a winner, update the weight matrix, and
+        """Runs a round, using the various other functions to determine a winner,
+        update the weight matrix, and
         update the ratings and win counts"""
         row, col = linear_sum_assignment(self.matrix)
         final_sum: int = 0

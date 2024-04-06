@@ -21,18 +21,23 @@ def determine_weights():
         if roundWeights[entry] >= 0:
             round_weight: int = 0
             if tournamentSize % 2 == 0:
-                for pair in range((tournamentSize // 2) - 1):
-                    round_weight += determine_weight((pair + 1 + entry) % (tournamentSize - 1),
-                                                     (entry - 1 - pair) % (tournamentSize - 1))
+                for i in range((tournamentSize // 2) - 1):
+                    round_weight += \
+                        determine_weight((i + 1 + entry) % (tournamentSize - 1),
+                                         (entry - 1 - i) % (tournamentSize - 1))
                 round_weight += determine_weight(entry, tournamentSize - 1)
             else:
-                for pair in range(tournamentSize // 2):
-                    round_weight += determine_weight((pair + 1 + entry) % tournamentSize,
-                                                     (entry - 1 - pair) % tournamentSize)
+                for i in range(tournamentSize // 2):
+                    round_weight += \
+                        determine_weight((i + 1 + entry) % tournamentSize,
+                                         (entry - 1 - i) % tournamentSize)
             roundWeights[entry] = round_weight
 
 
 def run_round():
+    """Runs the round of greatest weight in the tournament.
+    If it finds multiple, runs the round of lowest ordinal
+     and greatest weight."""
     heaviest_round: int = 0
     for entry in range(len(roundWeights)):
         if roundWeights[entry] > roundWeights[heaviest_round]:
@@ -41,28 +46,28 @@ def run_round():
     roundWeights[heaviest_round] = -1
     if tournamentSize % 2 == 0:
         determine_winner(heaviest_round, tournamentSize-1)
-        for pair in range((tournamentSize // 2) - 1):
-            player1: int = (pair + 1 + heaviest_round) % (tournamentSize - 1)
-            player2: int = (heaviest_round - pair - 1) % (tournamentSize - 1)
+        for i in range((tournamentSize // 2) - 1):
+            player1: int = (i + 1 + heaviest_round) % (tournamentSize - 1)
+            player2: int = (heaviest_round - i - 1) % (tournamentSize - 1)
             determine_winner(player1, player2)
     else:
-        for pair in range(tournamentSize // 2):
-            player1: int = (pair + 1 + heaviest_round) % tournamentSize
-            player2: int = (heaviest_round - pair - 1) % tournamentSize
+        for i in range(tournamentSize // 2):
+            player1: int = (i + 1 + heaviest_round) % tournamentSize
+            player2: int = (heaviest_round - i - 1) % tournamentSize
             determine_winner(player1, player2)
 
 
-tournamentSize: int = 100
+tournamentSize: int = 4
 playerList: list[int] = []
 roundWeights: list[int] = []
 
-for i in range(tournamentSize):
+for j in range(tournamentSize):
     playerList.append(0)
 
-for i in range(tournamentSize + (tournamentSize % 2) - 1):
+for j in range(tournamentSize + (tournamentSize % 2) - 1):
     roundWeights.append(0)
 
-for i in range(tournamentSize + (tournamentSize % 2) - 1):
+for j in range(tournamentSize + (tournamentSize % 2) - 1):
     print(playerList)
     print(roundWeights)
     run_round()
