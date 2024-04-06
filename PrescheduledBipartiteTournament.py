@@ -94,7 +94,7 @@ for tournamentNumber in range(numberOfTournaments):
         stringToWrite += str(tournament.run_round(round_number+1)) + ","
     stringToWrite = stringToWrite[0: len(stringToWrite) - 1]
     stringToWrite += "\n"
-    with open("results.csv", "a") as targetFile:
+    with open("prescheduledresults.csv", "a") as targetFile:
         targetFile.write(stringToWrite)
 
 
